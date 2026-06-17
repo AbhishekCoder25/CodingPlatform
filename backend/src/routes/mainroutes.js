@@ -1,0 +1,13 @@
+import { Router } from "express";
+import healthRouter from "./health.routes.js";
+import problemRouter from "./problem.routes.js";
+import submissionRouter from "./submission.routes.js";
+import userRouter from "./user.routes.js";
+const mainRouter = Router();
+
+// Register all API route groups here.
+mainRouter.use("/health", healthRouter);
+mainRouter.use("/problems", problemRouter);
+mainRouter.use("/submissions", submissionRouter);
+mainRouter.use("/users", userRouter);
+export default mainRouter;
