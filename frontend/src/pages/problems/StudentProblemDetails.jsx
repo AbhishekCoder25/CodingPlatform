@@ -712,9 +712,17 @@ export default function StudentProblemDetails() {
       return;
     }
 
-    if (suggestionState.visible && (event.key === "Tab" || event.key === "Enter")) {
+    if (suggestionState.visible && event.key === "Tab") {
       event.preventDefault();
       acceptSuggestion();
+      return;
+    }
+
+    if (suggestionState.visible && event.key === "Enter") {
+      setSuggestionState((current) => ({
+        ...current,
+        visible: false
+      }));
       return;
     }
 
@@ -730,6 +738,14 @@ export default function StudentProblemDetails() {
       event.preventDefault();
       const nextSourceCode = `${value.slice(0, selectionStart)}  ${value.slice(selectionEnd)}`;
       applyEditorValue(nextSourceCode, selectionStart + 2);
+      return;
+    }
+
+    if (event.key === "Enter" && value[selectionStart - 1] === "{" && nextCharacter === "}") {
+      event.preventDefault();
+      const indent = editor.language === "python" ? "    " : "  ";
+      const nextSourceCode = `${value.slice(0, selectionStart)}\n${indent}\n${value.slice(selectionEnd)}`;
+      applyEditorValue(nextSourceCode, selectionStart + indent.length + 1);
       return;
     }
 
