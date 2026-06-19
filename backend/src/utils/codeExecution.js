@@ -250,10 +250,10 @@ export async function executeSubmission({ language, sourceCode, testCases }) {
         testCaseResults.push({
           id: testCase.id,
           passed: false,
-          input: testCase.input_data ?? "",
-          expectedOutput: testCase.expected_output ?? "",
-          actualOutput: normalizeOutput(runResult.stdout),
-          stderr: runResult.stderr || "Execution timed out.",
+          input: testCase.is_sample ? (testCase.input_data ?? "") : "",
+          expectedOutput: testCase.is_sample ? (testCase.expected_output ?? "") : "",
+          actualOutput: testCase.is_sample ? normalizeOutput(runResult.stdout) : "",
+          stderr: testCase.is_sample ? (runResult.stderr || "Execution timed out.") : "Execution timed out.",
           executionTimeMs: runResult.executionTimeMs,
           isSample: Boolean(testCase.is_sample)
         });
@@ -266,15 +266,15 @@ export async function executeSubmission({ language, sourceCode, testCases }) {
           totalTestCases: testCases.length,
           executionTimeMs: totalExecutionTimeMs,
           memoryKb: null,
-          stdout: runResult.stdout,
-          stderr: runResult.stderr || "Execution timed out.",
+          stdout: testCase.is_sample ? runResult.stdout : "",
+          stderr: testCase.is_sample ? (runResult.stderr || "Execution timed out.") : "Execution timed out.",
           testCaseResults,
           compilerOutput: buildFeedback({
             stage: "run",
             passedTestCases,
             totalTestCases: testCases.length,
-            stdout: runResult.stdout,
-            stderr: runResult.stderr || "Execution timed out."
+            stdout: testCase.is_sample ? runResult.stdout : "",
+            stderr: testCase.is_sample ? (runResult.stderr || "Execution timed out.") : "Execution timed out."
           })
         };
       }
@@ -283,10 +283,10 @@ export async function executeSubmission({ language, sourceCode, testCases }) {
         testCaseResults.push({
           id: testCase.id,
           passed: false,
-          input: testCase.input_data ?? "",
-          expectedOutput: testCase.expected_output ?? "",
-          actualOutput: normalizeOutput(runResult.stdout),
-          stderr: runResult.stderr,
+          input: testCase.is_sample ? (testCase.input_data ?? "") : "",
+          expectedOutput: testCase.is_sample ? (testCase.expected_output ?? "") : "",
+          actualOutput: testCase.is_sample ? normalizeOutput(runResult.stdout) : "",
+          stderr: testCase.is_sample ? runResult.stderr : "Runtime error occurred.",
           executionTimeMs: runResult.executionTimeMs,
           isSample: Boolean(testCase.is_sample)
         });
@@ -299,15 +299,15 @@ export async function executeSubmission({ language, sourceCode, testCases }) {
           totalTestCases: testCases.length,
           executionTimeMs: totalExecutionTimeMs,
           memoryKb: null,
-          stdout: runResult.stdout,
-          stderr: runResult.stderr,
+          stdout: testCase.is_sample ? runResult.stdout : "",
+          stderr: testCase.is_sample ? runResult.stderr : "Runtime error occurred.",
           testCaseResults,
           compilerOutput: buildFeedback({
             stage: "run",
             passedTestCases,
             totalTestCases: testCases.length,
-            stdout: runResult.stdout,
-            stderr: runResult.stderr
+            stdout: testCase.is_sample ? runResult.stdout : "",
+            stderr: testCase.is_sample ? runResult.stderr : "Runtime error occurred."
           })
         };
       }
@@ -319,10 +319,10 @@ export async function executeSubmission({ language, sourceCode, testCases }) {
         testCaseResults.push({
           id: testCase.id,
           passed: false,
-          input: testCase.input_data ?? "",
-          expectedOutput,
-          actualOutput,
-          stderr: runResult.stderr,
+          input: testCase.is_sample ? (testCase.input_data ?? "") : "",
+          expectedOutput: testCase.is_sample ? expectedOutput : "",
+          actualOutput: testCase.is_sample ? actualOutput : "",
+          stderr: testCase.is_sample ? runResult.stderr : "",
           executionTimeMs: runResult.executionTimeMs,
           isSample: Boolean(testCase.is_sample)
         });
@@ -335,15 +335,17 @@ export async function executeSubmission({ language, sourceCode, testCases }) {
           totalTestCases: testCases.length,
           executionTimeMs: totalExecutionTimeMs,
           memoryKb: null,
-          stdout: runResult.stdout,
-          stderr: runResult.stderr,
+          stdout: testCase.is_sample ? runResult.stdout : "",
+          stderr: testCase.is_sample ? runResult.stderr : "",
           testCaseResults,
           compilerOutput: buildFeedback({
             stage: "run",
             passedTestCases,
             totalTestCases: testCases.length,
-            stdout: `Expected:\n${expectedOutput || "(empty)"}\n\nActual:\n${actualOutput || "(empty)"}`,
-            stderr: runResult.stderr
+            stdout: testCase.is_sample
+              ? `Expected:\n${expectedOutput || "(empty)"}\n\nActual:\n${actualOutput || "(empty)"}`
+              : "Hidden test case execution failed.",
+            stderr: testCase.is_sample ? runResult.stderr : ""
           })
         };
       }
@@ -352,10 +354,10 @@ export async function executeSubmission({ language, sourceCode, testCases }) {
       testCaseResults.push({
         id: testCase.id,
         passed: true,
-        input: testCase.input_data ?? "",
-        expectedOutput,
-        actualOutput,
-        stderr: runResult.stderr,
+        input: testCase.is_sample ? (testCase.input_data ?? "") : "",
+        expectedOutput: testCase.is_sample ? expectedOutput : "",
+        actualOutput: testCase.is_sample ? actualOutput : "",
+        stderr: testCase.is_sample ? runResult.stderr : "",
         executionTimeMs: runResult.executionTimeMs,
         isSample: Boolean(testCase.is_sample)
       });
