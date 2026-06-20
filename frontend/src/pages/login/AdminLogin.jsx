@@ -16,7 +16,6 @@ const adminHighlights = [
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState("login");
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({
     type: "",
@@ -41,37 +40,24 @@ export default function AdminLogin() {
       message: ""
     });
 
-    const authPayload =
-      mode === "register"
-        ? form
-        : {
-            email: form.email,
-            password: form.password
-          };
+    const authPayload = {
+      email: form.email,
+      password: form.password
+    };
 
     try {
       let data;
 
       try {
-        data = await apiRequest(
-          mode === "register" ? "/auth/register/admin" : "/auth/login/admin",
-          {
-            method: "POST",
-            body: JSON.stringify(authPayload)
-          }
-        );
+        data = await apiRequest("/auth/login/admin", {
+          method: "POST",
+          body: JSON.stringify(authPayload)
+        });
       } catch (_error) {
-        data = await apiRequest(
-          mode === "register" ? "/users/admin-register" : "/users/admin-login",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              fullName: form.fullName,
-              email: form.email,
-              password: form.password
-            })
-          }
-        );
+        data = await apiRequest("/users/admin-login", {
+          method: "POST",
+          body: JSON.stringify(authPayload)
+        });
       }
 
       const session = {
@@ -138,55 +124,19 @@ export default function AdminLogin() {
       <section className="auth-panel admin-panel auth-entry-panel">
         <div className="auth-form-panel-header">
           <p className="auth-kicker">Admin Access</p>
-          <h1>{mode === "register" ? "Register" : "Log in"}</h1>
+          <h1>Log in</h1>
           <p className="auth-form-panel-copy">
-            {mode === "register"
-              ? "Create a protected admin account for platform operations."
-              : "Continue into the admin control dashboard."}
+            Continue into the admin control dashboard.
           </p>
-        </div>
-
-        <div className="auth-switcher" role="tablist" aria-label="Admin auth mode">
-          <button
-            className={`auth-switcher-button ${mode === "login" ? "active admin-accent" : ""}`}
-            type="button"
-            onClick={() => setMode("login")}
-          >
-            Log in
-          </button>
-          <button
-            className={`auth-switcher-button ${mode === "register" ? "active admin-accent" : ""}`}
-            type="button"
-            onClick={() => setMode("register")}
-          >
-            Register
-          </button>
         </div>
 
         <div className="auth-form-card">
           <div className="auth-form-card-topline">
-            <span>{mode === "register" ? "Admin account creation" : "Protected admin sign in"}</span>
-            <strong>{mode === "register" ? "Operations access" : "Control room access"}</strong>
+            <span>Protected admin sign in</span>
+            <strong>Control room access</strong>
           </div>
 
           <form className="auth-form auth-form-portal" onSubmit={handleSubmit}>
-            {mode === "register" ? (
-              <>
-                <label className="form-field" htmlFor="fullName">
-                  Full name
-                </label>
-                <input
-                  id="fullName"
-                  name="fullName"
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={form.fullName}
-                  onChange={handleChange}
-                  required
-                />
-              </>
-            ) : null}
-
             <label className="form-field" htmlFor="email">
               Email
             </label>
@@ -215,11 +165,7 @@ export default function AdminLogin() {
             />
 
             <button className="auth-button admin-button auth-submit-wide" type="submit" disabled={isSubmitting}>
-              {isSubmitting
-                ? "Saving..."
-                : mode === "register"
-                  ? "Create admin account"
-                  : "Enter admin dashboard"}
+              {isSubmitting ? "Saving..." : "Enter admin dashboard"}
             </button>
           </form>
 
