@@ -31,7 +31,8 @@ export async function apiRequest(path, options = {}, token) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      throw new Error(data.message || "Request failed.");
+      const errorMsg = data.error ? `${data.message} (${data.error})` : (data.message || "Request failed.");
+      throw new Error(errorMsg);
     }
 
     return data;
