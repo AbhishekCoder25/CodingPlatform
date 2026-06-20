@@ -20,6 +20,7 @@ import AdminCourseDetails from "../pages/courses/AdminCourseDetails";
 import AdminCourseProblemDetails from "../pages/courses/AdminCourseProblemDetails";
 import FacultyCourseDetails from "../pages/courses/FacultyCourseDetails";
 import FacultyCourseProblemDetails from "../pages/courses/FacultyCourseProblemDetails";
+import FacultyCourseList from "../pages/courses/FacultyCourseList";
 import FacultyStudentList from "../pages/faculty/FacultyStudentList";
 import FacultyStudentSubmissions from "../pages/faculty/FacultyStudentSubmissions";
 import StudentCourseDetails from "../pages/courses/StudentCourseDetails";
@@ -54,7 +55,7 @@ export default function MainRoutes() {
       <Route path="/studentDashboard" element={<StudentDashboard />} />
       <Route path="/faculty/login" element={<FacultyLogin />} />
       <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
-      <Route path="/faculty/courses" element={<FacultyDashboard />} />
+      <Route path="/faculty/courses" element={<FacultyCourseList />} />
       <Route path="/faculty/courses/:courseId" element={<FacultyCourseDetails />} />
       <Route path="/faculty/courses/:courseId/problems/:problemId" element={<FacultyCourseProblemDetails />} />
       <Route path="/faculty/students" element={<FacultyStudentList />} />
