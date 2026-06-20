@@ -15,6 +15,7 @@ import AdminProblemDetails from "../pages/problems/AdminProblemDetails";
 import AdminStudentList from "../pages/admin/AdminStudentList";
 import AdminStudentSubmissions from "../pages/admin/AdminStudentSubmissions";
 import AdminFacultyList from "../pages/admin/AdminFacultyList";
+import AdminAdminList from "../pages/admin/AdminAdminList";
 import AdminCourseManager from "../pages/courses/AdminCourseManager";
 import AdminCourseDetails from "../pages/courses/AdminCourseDetails";
 import AdminCourseProblemDetails from "../pages/courses/AdminCourseProblemDetails";
@@ -71,6 +72,7 @@ export default function MainRoutes() {
       <Route path="/admin/problems" element={<AdminProblemList />} />
       <Route path="/admin/problems/:problemId" element={<AdminProblemDetails />} />
       <Route path="/admin/students" element={<AdminStudentList />} />
+      <Route path="/admin/admins" element={<AdminAdminList />} />
       <Route path="/admin/faculty" element={<AdminFacultyList />} />
       <Route path="/admin/students/:studentId/submissions" element={<AdminStudentSubmissions />} />
       <Route path="*" element={<NotFoundPage />} />

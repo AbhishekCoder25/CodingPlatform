@@ -8,7 +8,6 @@ import {
 
 const authRouter = Router();
 
-authRouter.post("/register/admin", registerUser);
 authRouter.post("/login/:role", loginUser);
 authRouter.get("/me", requireAuth, requireMongoUser, attachRoleProfile, getAuthMe);
 

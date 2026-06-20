@@ -709,8 +709,9 @@ export function loginStudent(req, res, next) {
 
 export function registerAdmin(req, res, next) {
   return registerUser(req, res, next, "admin", {
-    allowPublicRegistration: true,
-    issueToken: true
+    allowPublicRegistration: false,
+    issueToken: false,
+    successMessage: "Admin account created successfully."
   });
 }
 

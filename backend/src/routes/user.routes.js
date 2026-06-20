@@ -19,7 +19,7 @@ import { requireAuth, requireMongoUser, requireRole } from "../middleware/auth.m
 
 const userRouter = Router();
 
-userRouter.post("/admin-register", registerAdmin);
+userRouter.post("/admin-register", requireAuth, requireRole("admin"), registerAdmin);
 userRouter.post("/admin-login", loginAdmin);
 userRouter.post("/faculty-register", requireAuth, requireRole("admin"), registerFaculty);
 userRouter.post("/faculty-login", loginFaculty);
