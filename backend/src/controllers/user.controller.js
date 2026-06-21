@@ -708,10 +708,7 @@ export function loginStudent(req, res, next) {
 }
 
 export function registerAdmin(req, res, next) {
-  return registerUser(req, res, next, "admin", {
-    allowPublicRegistration: true,
-    issueToken: true
-  });
+  return registerUser(req, res, next, "admin");
 }
 
 export function loginAdmin(req, res, next) {
