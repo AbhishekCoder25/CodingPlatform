@@ -1,4 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { clearStudentSession, clearFacultySession, clearAdminSession } from "../utils/session";
 
 const navItemsByRole = {
   student: [
@@ -40,16 +41,30 @@ export function PlatformLayout({
   sidebarNote
 }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const navItems = navItemsByRole[role] ?? [];
+
+  const handleLogout = () => {
+    if (role === "student") {
+      clearStudentSession();
+      navigate("/student/login");
+    } else if (role === "faculty") {
+      clearFacultySession();
+      navigate("/faculty/login");
+    } else if (role === "admin") {
+      clearAdminSession();
+      navigate("/admin/login");
+    }
+  };
 
   return (
     <main className={`platform-page ${role}-platform-page`}>
       <aside className="platform-sidebar">
         <Link className="platform-brand" to="/">
           <span className="platform-brand-mark">
-            {role === "admin" ? "CT Admin" : role === "faculty" ? "CT Faculty" : "CT Student"}
+            {role === "admin" ? "ProCoder Admin" : role === "faculty" ? "ProCoder Faculty" : "ProCoder Student"}
           </span>
-          <strong>CodeTantra Style Portal</strong>
+          <strong>ProCoder Platform</strong>
         </Link>
 
         <div className="platform-sidebar-copy">
@@ -76,6 +91,26 @@ export function PlatformLayout({
               {item.label}
             </Link>
           ))}
+          <button
+            onClick={handleLogout}
+            className="platform-nav-item platform-logout-btn"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Logout
+          </button>
         </nav>
       </aside>
 
