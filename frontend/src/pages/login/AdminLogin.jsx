@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveAdminSession } from "../../utils/session";
 import { apiRequest } from "../../utils/api";
@@ -22,6 +22,10 @@ export default function AdminLogin() {
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    document.title = "Codexa: Admin Login";
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;

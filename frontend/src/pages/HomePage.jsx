@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const languages = [
@@ -20,11 +21,15 @@ const languages = [
 ];
 
 export default function HomePage() {
+  useEffect(() => {
+    document.title = "Codexa | Dynamic Coding Platform";
+  }, []);
+
   return (
     <main className="landing-page">
       <section className="landing-shell">
         <div className="landing-hero">
-          <p className="landing-kicker">ProCoder Platform</p>
+          <p className="landing-kicker">Codexa Platform</p>
           <h1>Train, review, and manage coding workflows in a workspace inspired by modern challenge platforms.</h1>
           <p className="landing-copy">
             Choose whether you are a student, faculty member, or admin, then move into a role-based

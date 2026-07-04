@@ -409,6 +409,14 @@ export default function StudentProblemDetails() {
   }, [problemId]);
 
   useEffect(() => {
+    if (problem?.title) {
+      document.title = `Codexa: ${problem.title}`;
+    } else {
+      document.title = "Codexa: Loading Challenge";
+    }
+  }, [problem]);
+
+  useEffect(() => {
     if (!problemId || !isDraftReady) {
       return;
     }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveFacultySession } from "../../utils/session";
 import { apiRequest } from "../../utils/api";
@@ -16,6 +16,10 @@ export default function FacultyLogin() {
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    document.title = "Codexa: Faculty Login";
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
