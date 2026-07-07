@@ -998,16 +998,85 @@ export default function StudentProblemDetails() {
 
     if (event.key === "Tab") {
       event.preventDefault();
-      const nextSourceCode = `${value.slice(0, selectionStart)}  ${value.slice(selectionEnd)}`;
-      applyEditorValue(nextSourceCode, selectionStart + 2);
+      const indentStr = editor.language === "python" ? "    " : "  ";
+
+      const actualSelectionEnd = selectionEnd > selectionStart && value[selectionEnd - 1] === "\n" ? selectionEnd - 1 : selectionEnd;
+      const startLineIndex = value.lastIndexOf("\n", selectionStart - 1) + 1;
+      const endLineIndex = value.indexOf("\n", actualSelectionEnd);
+      const endLineContentEnd = endLineIndex === -1 ? value.length : endLineIndex;
+
+      const hasNewlineInSelection = selectionStart !== selectionEnd && value.slice(selectionStart, actualSelectionEnd).includes("\n");
+
+      if (hasNewlineInSelection || event.shiftKey) {
+        const lines = value.slice(startLineIndex, endLineContentEnd).split("\n");
+
+        let newSelectionStart = selectionStart;
+        let newSelectionEnd = selectionEnd;
+        let currentLineOriginalStart = startLineIndex;
+
+        const newLines = lines.map((line, index) => {
+          const isFirstLine = index === 0;
+          const isLastLine = index === lines.length - 1;
+
+          if (event.shiftKey) {
+            const leadingSpaces = line.match(/^ */)[0];
+            const removeCount = Math.min(leadingSpaces.length, indentStr.length);
+
+            if (isFirstLine) {
+              const spacesBeforeStart = Math.min(removeCount, Math.max(0, selectionStart - currentLineOriginalStart));
+              newSelectionStart -= spacesBeforeStart;
+            }
+            if (isLastLine) {
+              const spacesBeforeEnd = Math.min(removeCount, Math.max(0, selectionEnd - currentLineOriginalStart));
+              newSelectionEnd -= spacesBeforeEnd;
+            } else {
+              newSelectionEnd -= removeCount;
+            }
+            currentLineOriginalStart += line.length + 1;
+            return line.slice(removeCount);
+          } else {
+            if (isFirstLine) newSelectionStart += indentStr.length;
+            newSelectionEnd += indentStr.length;
+
+            currentLineOriginalStart += line.length + 1;
+            return indentStr + line;
+          }
+        });
+
+        const nextSourceCode = value.slice(0, startLineIndex) + newLines.join("\n") + value.slice(endLineContentEnd);
+        applyEditorValue(nextSourceCode, Math.max(0, newSelectionStart), Math.max(0, newSelectionEnd));
+      } else {
+        const nextSourceCode = `${value.slice(0, selectionStart)}${indentStr}${value.slice(selectionEnd)}`;
+        applyEditorValue(nextSourceCode, selectionStart + indentStr.length);
+      }
       return;
     }
 
-    if (event.key === "Enter" && value[selectionStart - 1] === "{" && nextCharacter === "}") {
+    if (event.key === "Enter") {
       event.preventDefault();
-      const indent = editor.language === "python" ? "    " : "  ";
-      const nextSourceCode = `${value.slice(0, selectionStart)}\n${indent}\n${value.slice(selectionEnd)}`;
-      applyEditorValue(nextSourceCode, selectionStart + indent.length + 1);
+      // Find the start of the current line to detect its indentation
+      const lineStart = value.lastIndexOf("\n", selectionStart - 1) + 1;
+      const currentLine = value.slice(lineStart, selectionStart);
+      const leadingWhitespace = currentLine.match(/^(\s*)/)[1];
+      const indentUnit = editor.language === "python" ? "    " : "  ";
+
+      if (value[selectionStart - 1] === "{" && nextCharacter === "}") {
+        // Special case: cursor inside { } — add extra indent level and place closing brace below
+        const nextSourceCode = `${value.slice(0, selectionStart)}\n${leadingWhitespace}${indentUnit}\n${leadingWhitespace}${value.slice(selectionEnd)}`;
+        applyEditorValue(nextSourceCode, selectionStart + leadingWhitespace.length + indentUnit.length + 1);
+      } else if (
+        value[selectionStart - 1] === "{" ||
+        value[selectionStart - 1] === ":" ||
+        value[selectionStart - 1] === "("
+      ) {
+        // Opening brace/colon (Python) — indent one level deeper
+        const nextSourceCode = `${value.slice(0, selectionStart)}\n${leadingWhitespace}${indentUnit}${value.slice(selectionEnd)}`;
+        applyEditorValue(nextSourceCode, selectionStart + leadingWhitespace.length + indentUnit.length + 1);
+      } else {
+        // Normal Enter — carry current line's indentation
+        const nextSourceCode = `${value.slice(0, selectionStart)}\n${leadingWhitespace}${value.slice(selectionEnd)}`;
+        applyEditorValue(nextSourceCode, selectionStart + leadingWhitespace.length + 1);
+      }
       return;
     }
 

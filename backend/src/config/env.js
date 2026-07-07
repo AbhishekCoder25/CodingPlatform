@@ -26,7 +26,13 @@ export const env = {
   pgSsl:
     process.env.PGSSL === "true" ||
     String(process.env.DATABASE_URL || "").includes("neon.tech"),
-  jwtSecret: process.env.JWT_SECRET || "development-jwt-secret-change-me",
+  jwtSecret: (() => {
+    if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("FATAL: JWT_SECRET environment variable is missing in production. Refusing to start with weak fallback.");
+    }
+    return "development-jwt-secret-change-me";
+  })(),
   judge0BaseUrl: (process.env.JUDGE0_BASE_URL || "https://ce.judge0.com").trim(),
   judge0ApiKey: (process.env.JUDGE0_API_KEY || "").trim(),
   judge0ApiHost: (process.env.JUDGE0_API_HOST || "").trim(),
