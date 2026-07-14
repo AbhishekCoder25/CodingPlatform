@@ -521,6 +521,7 @@ export default function StudentProblemDetails() {
   const [leftActiveTab, setLeftActiveTab] = useState("description");
   const [activeTestCaseIndex, setActiveTestCaseIndex] = useState(0);
   const [cursorPos, setCursorPos] = useState({ line: 1, column: 1 });
+  const [workspaceTab, setWorkspaceTab] = useState("description"); // "description" or "code"
 
   function updateCursorPos(textarea) {
     if (!textarea) return;
@@ -1135,6 +1136,7 @@ export default function StudentProblemDetails() {
     setRunMessage("");
     setConsoleTab("results");
     setLeftActiveTab("testResult");
+    setWorkspaceTab("description");
 
     try {
       const response = await fetch(`${apiBaseUrl}/submissions`, {
@@ -1203,6 +1205,7 @@ export default function StudentProblemDetails() {
     setLatestSubmitExecution(null);
     setConsoleTab("results");
     setLeftActiveTab("testResult");
+    setWorkspaceTab("description");
 
     try {
       const response = await fetch(`${apiBaseUrl}/submissions/run`, {
@@ -1362,7 +1365,7 @@ export default function StudentProblemDetails() {
                   strokeLinejoin="round"
                 />
               </svg>
-              codexa
+              <span className="brand-text-desktop">codexa</span>
             </span>
             <span style={{ color: "#2d2d2d", margin: "0 0.5rem" }}>|</span>
             <span style={{ fontSize: "0.85rem", fontWeight: "500" }}>
@@ -1493,8 +1496,29 @@ export default function StudentProblemDetails() {
         {status.error ? <p className="form-status error">{status.error}</p> : null}
 
         {problem ? (
-          <section className="workspace-shell" style={{ gridTemplateColumns: "1fr 1.15fr", padding: "0.5rem" }}>
-            <article className="detail-block workspace-column workspace-problem-panel">
+          <>
+            {/* Mobile Workspace Toggle Tabs */}
+            <div className="mobile-workspace-tabs">
+              <button 
+                type="button" 
+                className={`mobile-workspace-tab ${workspaceTab === "description" ? "active" : ""}`}
+                onClick={() => setWorkspaceTab("description")}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style={{ marginRight: "4px", verticalAlign: "middle" }}><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                Description
+              </button>
+              <button 
+                type="button" 
+                className={`mobile-workspace-tab ${workspaceTab === "code" ? "active" : ""}`}
+                onClick={() => setWorkspaceTab("code")}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "4px", verticalAlign: "middle" }}><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                Code
+              </button>
+            </div>
+
+            <section className="workspace-shell" style={{ padding: "0.5rem" }}>
+              <article className={`detail-block workspace-column workspace-problem-panel ${workspaceTab !== "description" ? "mobile-hidden" : ""}`}>
               <div className="leetcode-tab-container">
                 <button
                   type="button"
@@ -1847,7 +1871,7 @@ export default function StudentProblemDetails() {
 
             </article>
 
-            <article className="detail-block workspace-column editor-column">
+            <article className={`detail-block workspace-column editor-column ${workspaceTab !== "code" ? "mobile-hidden" : ""}`}>
               <div className="leetcode-tab-container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", paddingRight: "0.5rem", height: "38px" }}>
                 <span className="leetcode-tab active" style={{ cursor: "default", display: "flex", alignItems: "center", gap: "0.4rem", padding: "0 0.8rem", height: "100%", borderBottom: "2px solid #10b981" }}>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
@@ -2003,6 +2027,7 @@ export default function StudentProblemDetails() {
 
             </article>
           </section>
+          </>
         ) : null}
       </section>
     </main>
